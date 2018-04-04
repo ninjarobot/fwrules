@@ -74,14 +74,14 @@ let ``Proof of concept test - generate IP tables rules`` () =
     let buildIptablesRules (p:Policy) =
         let rules = p |> policyToRules
         rules |> List.map (fun (rule:Rule) ->
-            sprintf """iptables -A INPUT -p %s -s %s -d %s -dport %s %s --comment "%s: %s" """ rule.Protocol rule.Source rule.Destination rule.Port rule.Operation rule.PolicyName rule.RuleName
+            sprintf """iptables -A INPUT -p %s -s %s -d %s:%s -j %s -m comment --comment "%s: %s" """ rule.Protocol rule.Source rule.Destination rule.Port rule.Operation rule.PolicyName rule.RuleName
         )
 
     let buildIptablesPolicies (policies:Policy list) =
         let ipTables = 
             policies
             |> List.collect buildIptablesRules
-        ipTables @ [ (sprintf """iptables -A INPUT -p %s -s %s -d %s -dport %s REJECT --comment "deny anything else" """ All.Label "0.0.0.0/32" "0.0.0.0" "*") ]
+        ipTables @ [ (sprintf """iptables -A INPUT -p %s -s %s -d %s -j REJECT -m comment --comment "deny anything else" """ All.Label "0.0.0.0/32" "0.0.0.0") ]
 
     let iptablesRules = [lbPolicy; webPolicy; jumpBoxPolicy; dbPolicy] |> buildIptablesPolicies
     let expectedRules = System.IO.File.ReadAllLines("SampleIptables.txt")
