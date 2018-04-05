@@ -10,6 +10,7 @@
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
     <None Include="SampleIptables.txt" CopyToOutputDirectory="Always" />
+    <None Include="FilteredIptables.txt" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>

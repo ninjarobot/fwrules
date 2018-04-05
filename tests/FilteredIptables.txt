@@ -1,0 +1,5 @@
+iptables -A INPUT -p tcp -s 66.23.49.121 -d 192.168.0.102:80 -j ACCEPT -m comment --comment "lb to web servers: http"
+iptables -A INPUT -p tcp -s 66.23.49.121 -d 192.168.0.102:443 -j ACCEPT -m comment --comment "lb to web servers: https"
+iptables -A INPUT -p tcp -s 192.168.100.2 -d 192.168.0.102:22 -j ACCEPT -m comment --comment "jump boxes to servers: ssh"
+iptables -A OUTPUT -p tcp -s 192.168.0.102 -d 192.168.5.20:5432 -j ACCEPT -m comment --comment "web to database servers: pgsql"
+iptables -A OUTPUT -p tcp -s 192.168.0.102 -d 192.168.5.21:5432 -j ACCEPT -m comment --comment "web to database servers: pgsql"

@@ -69,12 +69,24 @@ module Policy =
         PolicyName: string // The policy name
     }
 
-    let policyToRules (p:Policy) =
+    let policyToRules (filter:IPAddress option) (p:Policy) =
         let rec getServiceRules (service:Service) =
             match service with
             | Service (serviceName, protocol, port) ->
                 p.Source |> List.map (fun src -> 
-                    p.Destination |> List.map (fun dest ->
+                    p.Destination
+                    |> List.filter (fun dest ->
+                        match filter with
+                        | None -> true
+                        | Some filterIp ->
+                            match src, dest with
+                            | Host srcIp, Host destIp when srcIp = filterIp || destIp = filterIp -> true
+                            | Host srcIp, Network _ when srcIp = filterIp -> true
+                            | Network _, Host destIp when destIp = filterIp -> true
+                            | Network _, Network _ -> true
+                            | _ -> false
+                    )
+                    |> List.map (fun dest ->
                         {
                             Operation = p.Operation.Label
                             Protocol = protocol.Label
