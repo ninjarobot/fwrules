@@ -2,7 +2,9 @@ module Tests
 
 open System
 open Xunit
+open FwRules.Domain
 open FwRules.Policy
+open FwRules.Formatters.IpTables
 
 let http = 
     Services ("http",
